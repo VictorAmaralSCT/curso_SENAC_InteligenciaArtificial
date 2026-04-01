@@ -6,28 +6,6 @@ Este repositório reúne todo o conteúdo utilizado ao longo das aulas, incluind
 
 ---
 
-##  Estrutura do Repositório
-
-📁 notebooks_aula/
-└── Notebooks utilizados durante as aulas
-
-📁 notebooks_respostas/
-└── Resoluções completas dos exercícios
-
-📁 exercicios/
-└── Listas de exercícios propostos
-
-📁 desafios/
-└── Exercícios mais avançados (opcionais)
-
-📁 dados/
-└── Bases de dados utilizadas nos exemplos
-
-📁 tarefas/
-└── Atividades para serem realizadas em casa
-
-
----
 
 ##  Objetivo do Curso
 
