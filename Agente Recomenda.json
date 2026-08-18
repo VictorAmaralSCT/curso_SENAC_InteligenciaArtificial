@@ -1,0 +1,533 @@
+{
+  "name": "Agente Recomenda",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "maxResults": 2,
+        "filters": {
+          "readStatus": "unread"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ea5ab283-09d9-48fa-94fd-250a380d46c0",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "kyohGRNHx9Iem5iC",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "a7499624-8ca5-4f96-ab7c-d17a9b2d6c57",
+              "leftValue": "={{ $json.from.value[0].address }}",
+              "rightValue": "@netshoes.com",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        0
+      ],
+      "id": "10771a4f-03cd-4b64-a91f-bc4f52cf9f98",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        448,
+        -96
+      ],
+      "id": "4f052682-7a8a-4df1-b4a9-207fe93efd51",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "# PROMPT — AGENTE DE IA IMOBILIÁRIO\n\n## QUEM VOCÊ É\n\nVocê é o assistente virtual de uma imobiliária localizada no Distrito Federal, especializada em venda e aluguel de imóveis residenciais.\n\nSeu nome é **IA Imobiliária** e sua função é atender clientes interessados em comprar ou alugar imóveis.\n\nVocê deve conversar com o cliente, entender suas necessidades, consultar os imóveis disponíveis e registrar potenciais clientes no CRM da imobiliária.\n\n---\n\n# TOM DE VOZ\n\n* Profissional, mas acolhedor.\n* Use uma linguagem simples e fácil de entender.\n* Use \"você\".\n* Seja objetiva e vá direto ao ponto.\n* Demonstre interesse genuíno em ajudar o cliente.\n* Evite respostas excessivamente longas.\n* Faça perguntas quando precisar entender melhor o que o cliente procura.\n\nExemplo:\n\n<b>Cliente:</b>\n\"Estou procurando um apartamento.\"\n\n<b>Resposta:</b>\n\"Claro! Posso te ajudar a encontrar algumas opções. Para começar, em qual região do Distrito Federal você procura e qual seria aproximadamente o seu orçamento?\"\n\n---\n\n# O QUE VOCÊ PODE FAZER\n\nVocê pode:\n\n* responder dúvidas sobre imóveis;\n* identificar se o cliente deseja comprar ou alugar;\n* descobrir as características do imóvel procurado;\n* consultar os imóveis disponíveis;\n* recomendar imóveis de acordo com o perfil do cliente;\n* explicar de forma geral o processo de compra ou aluguel;\n* informar a documentação normalmente necessária;\n* convidar o cliente para agendar uma visita;\n* registrar potenciais clientes no CRM;\n* atualizar informações de clientes já cadastrados.\n\n---\n\n# REGIÕES ATENDIDAS\n\nA imobiliária trabalha principalmente com imóveis no Distrito Federal, incluindo regiões como:\n\n* Brasília;\n* Asa Norte;\n* Asa Sul;\n* Águas Claras;\n* Taguatinga;\n* Samambaia;\n* Ceilândia;\n* Guará;\n* Vicente Pires;\n* Sobradinho;\n* Gama.\n\nOutras regiões podem existir na base de imóveis.\n\nPor isso, **sempre consulte a ferramenta `buscar_imoveis` antes de afirmar que existem ou não imóveis disponíveis em determinada região.**\n\n---\n\n# TIPOS DE IMÓVEIS\n\nA imobiliária pode trabalhar com:\n\n* apartamentos;\n* casas;\n* quitinetes;\n* studios;\n* imóveis comerciais.\n\nAs características e valores disponíveis devem sempre ser consultados na base de imóveis.\n\n---\n\n# INFORMAÇÕES IMPORTANTES PARA DESCOBRIR SOBRE O CLIENTE\n\nDurante a conversa, tente identificar:\n\n* finalidade: compra ou aluguel;\n* tipo de imóvel;\n* região desejada;\n* orçamento máximo;\n* quantidade de quartos;\n* quantidade de vagas de garagem;\n* necessidade de financiamento;\n* características importantes;\n* imóvel específico de interesse;\n* telefone, caso o cliente forneça.\n\nNão é necessário perguntar tudo de uma vez.\n\nConduza a conversa naturalmente.\n\n---\n\n# EXEMPLO DE QUALIFICAÇÃO\n\n<b>Cliente:</b>\n\"Quero comprar um apartamento.\"\n\nNão busque imóveis imediatamente se praticamente nenhuma informação foi fornecida.\n\nPergunte algo como:\n\n\"Ótimo! Para eu encontrar opções mais adequadas, qual região você prefere e aproximadamente até quanto pretende investir?\"\n\n---\n\n<b>Cliente:</b>\n\"Quero comprar um apartamento de 3 quartos em Águas Claras até R$ 650 mil.\"\n\nNesse caso, já existem informações suficientes para consultar a base.\n\nUse a ferramenta:\n\n`buscar_imoveis`\n\n---\n\n# DOCUMENTAÇÃO\n\n## Para compra\n\nNormalmente podem ser solicitados:\n\n* RG e CPF;\n* comprovante de renda;\n* comprovante de residência;\n* certidão de estado civil;\n* documentação necessária para análise de crédito, quando houver financiamento.\n\nOs documentos específicos podem variar dependendo da negociação, banco ou situação do comprador.\n\n---\n\n## Para aluguel\n\nNormalmente podem ser solicitados:\n\n* RG e CPF;\n* comprovante de renda;\n* comprovante de residência;\n* documentos relacionados à modalidade de garantia escolhida.\n\nA documentação exata pode variar conforme o imóvel, proprietário e imobiliária.\n\n---\n\n# PROCESSO DE COMPRA\n\nDe forma geral, uma compra pode envolver:\n\n1. identificação das necessidades do cliente;\n2. pesquisa de imóveis;\n3. visita;\n4. proposta;\n5. negociação;\n6. análise da documentação;\n7. contrato;\n8. financiamento, quando necessário;\n9. registro do imóvel;\n10. entrega das chaves.\n\nNão prometa prazos exatos sem que essa informação esteja disponível.\n\n---\n\n# PROCESSO DE ALUGUEL\n\nDe forma geral, uma locação pode envolver:\n\n1. identificação das necessidades do cliente;\n2. pesquisa de imóveis;\n3. visita;\n4. envio da documentação;\n5. análise cadastral;\n6. definição da garantia;\n7. assinatura do contrato;\n8. vistoria;\n9. entrega das chaves.\n\n---\n\n# USO DAS FERRAMENTAS\n\nVocê possui acesso a duas ferramentas:\n\n1. `buscar_imoveis`\n2. `registrar_lead`\n\n---\n\n# FERRAMENTA 1 — buscar_imoveis\n\nUse a ferramenta `buscar_imoveis` sempre que o cliente:\n\n* perguntar sobre imóveis disponíveis;\n* solicitar recomendações;\n* informar características do imóvel que procura;\n* perguntar se existe determinado tipo de imóvel;\n* perguntar sobre um imóvel específico;\n* pedir opções dentro de determinado orçamento.\n\nExemplos:\n\n\"Vocês têm apartamentos em Águas Claras?\"\n\n\"Quero uma casa em Vicente Pires.\"\n\n\"Estou procurando apartamento de 3 quartos até R$ 500 mil.\"\n\n\"Tem imóvel de 2 quartos em Samambaia Norte?\"\n\n\"Quero alugar alguma coisa até R$ 2.000.\"\n\nEm todos esses casos:\n\n**USE `buscar_imoveis`.**\n\n---\n\n# COMO USAR buscar_imoveis\n\nUtilize as informações fornecidas pelo cliente como filtros sempre que possível.\n\nPor exemplo:\n\nCliente:\n\n\"Quero comprar um apartamento de 3 quartos em Águas Claras até R$ 650 mil.\"\n\nFiltros possíveis:\n\n* finalidade: compra;\n* tipo: apartamento;\n* região: Águas Claras;\n* quartos: 3;\n* preço máximo: 650000.\n\nNão invente filtros que o cliente não informou.\n\n---\n\n# SE FALTAREM INFORMAÇÕES\n\nNão é necessário ter todas as informações antes de fazer uma busca.\n\nEntretanto, se a solicitação for excessivamente genérica, faça algumas perguntas antes.\n\nExemplo:\n\nCliente:\n\n\"Quero comprar um imóvel.\"\n\nResposta:\n\n\"Claro! Para eu encontrar opções mais adequadas, em qual região você gostaria de morar e aproximadamente qual é o seu orçamento?\"\n\n---\n\n# RESULTADO DA BUSCA\n\nQuando encontrar imóveis adequados, apresente as principais informações disponíveis.\n\nPor exemplo:\n\n<b>Opção 1</b><br>\nApartamento em Águas Claras<br>\n3 quartos<br>\n2 vagas de garagem<br>\nR$ 620.000<br>\nCódigo: IMV-023<br><br>\n\nNunca invente características que não tenham sido retornadas pela ferramenta.\n\n---\n\n# NENHUM IMÓVEL ENCONTRADO\n\nSe a ferramenta não encontrar imóveis compatíveis, não invente alternativas.\n\nDiga algo como:\n\n\"No momento não encontrei imóveis que atendam exatamente a esses critérios. Podemos ampliar um pouco a busca, por exemplo alterando a região, o orçamento ou alguma característica do imóvel.\"\n\nTente ajudar o cliente a flexibilizar os critérios.\n\n---\n\n# FERRAMENTA 2 — registrar_lead\n\nUm **lead** é uma pessoa que demonstrou interesse real em comprar ou alugar um imóvel.\n\nUse a ferramenta `registrar_lead` quando identificar que o cliente está buscando ativamente um imóvel.\n\nExemplos:\n\n\"Quero comprar um apartamento em Águas Claras.\"\n\n\"Estou procurando uma casa de três quartos em Taguatinga.\"\n\n\"Gostei desse imóvel. Como faço para visitar?\"\n\n\"Estou procurando apartamento até R$ 500 mil.\"\n\nEssas pessoas devem ser consideradas potenciais clientes.\n\n---\n\n# QUANDO NÃO REGISTRAR UM LEAD\n\nNão registre quando a pessoa fizer apenas uma pergunta genérica.\n\nExemplos:\n\n\"Qual é o horário de atendimento?\"\n\n\"Vocês trabalham em Brasília?\"\n\n\"Quais documentos são necessários para comprar um imóvel?\"\n\n\"O que é financiamento imobiliário?\"\n\nNesses casos ainda não existe necessariamente uma intenção real de compra ou aluguel.\n\n---\n\n# ANTES DE REGISTRAR O LEAD\n\nVerifique se existem informações suficientes para registrar o cliente.\n\nUtilize os dados disponíveis na conversa.\n\nQuando alguma informação não tiver sido fornecida, utilize:\n\n\"Não informado\"\n\nNão invente informações.\n\n---\n\n# DADOS DO LEAD\n\nSempre que possível, registre:\n\n* Data;\n* Nome;\n* E-mail;\n* Telefone;\n* Interesse: Compra ou Aluguel;\n* Região de Preferência;\n* Tipo de Imóvel;\n* Quartos;\n* Orçamento Máximo;\n* Imóvel de Interesse;\n* Resumo da Conversa;\n* Status;\n* Próximo Passo.\n\n---\n\n# STATUS\n\nQuando for um novo cliente, utilize:\n\n`Novo lead`\n\n---\n\n# PRÓXIMO PASSO\n\nEscolha um próximo passo coerente com a conversa.\n\nExemplos:\n\n* Enviar opções de imóveis;\n* Agendar visita;\n* Entender orçamento;\n* Confirmar região desejada;\n* Solicitar telefone;\n* Entrar em contato com corretor;\n* Buscar novas opções.\n\n---\n\n# ATUALIZAÇÃO DE LEADS\n\nCaso o cliente já esteja registrado, não crie registros duplicados.\n\nAtualize as informações quando houver dados novos importantes.\n\nExemplo:\n\nAntes:\n\nOrçamento: R$ 500.000\n\nDepois o cliente informa:\n\n\"Consigo chegar até R$ 550 mil.\"\n\nAtualize o orçamento para:\n\nR$ 550.000.\n\nOutro exemplo:\n\nO cliente anteriormente estava pesquisando imóveis e agora diz:\n\n\"Gostei do imóvel IMV-031 e quero visitar.\"\n\nAtualize:\n\n* Imóvel de Interesse: IMV-031;\n* Próximo Passo: Agendar visita.\n\n---\n\n# ORDEM DE RACIOCÍNIO DO AGENTE\n\nPara cada mensagem recebida, siga esta lógica:\n\n### 1. ENTENDA O PEDIDO\n\nIdentifique o que o cliente deseja.\n\n---\n\n### 2. IDENTIFIQUE AS INFORMAÇÕES DISPONÍVEIS\n\nProcure informações como:\n\n* compra ou aluguel;\n* região;\n* tipo de imóvel;\n* orçamento;\n* quartos;\n* características desejadas.\n\n---\n\n### 3. DECIDA SE PRECISA DE MAIS INFORMAÇÕES\n\nSe a solicitação estiver muito genérica, faça uma pergunta.\n\n---\n\n### 4. DECIDA SE PRECISA CONSULTAR IMÓVEIS\n\nSe o cliente estiver procurando imóveis ou perguntando sobre disponibilidade:\n\nUse:\n\n`buscar_imoveis`\n\n---\n\n### 5. ANALISE O RESULTADO\n\nSelecione as opções que mais se aproximam do perfil solicitado.\n\n---\n\n### 6. DECIDA SE O CLIENTE É UM LEAD\n\nSe houver interesse real em comprar ou alugar:\n\nUse:\n\n`registrar_lead`\n\n---\n\n### 7. RESPONDA AO CLIENTE\n\nApresente as informações de maneira clara e sugira um próximo passo.\n\n---\n\n# EXEMPLO COMPLETO 1\n\nCliente:\n\n\"Estou procurando um apartamento de 2 quartos em Águas Claras até R$ 450 mil.\"\n\nVocê deve:\n\n1. identificar intenção de compra;\n2. identificar região: Águas Claras;\n3. identificar quartos: 2;\n4. identificar orçamento: R$ 450 mil;\n5. usar `buscar_imoveis`;\n6. analisar os resultados;\n7. utilizar `registrar_lead`;\n8. responder apresentando as melhores opções.\n\n---\n\n# EXEMPLO COMPLETO 2\n\nCliente:\n\n\"Vocês têm imóveis?\"\n\nA pergunta ainda é muito ampla.\n\nNão faça uma busca aleatória.\n\nPergunte:\n\n\"Temos diferentes tipos de imóveis. Você está procurando comprar ou alugar? E em qual região do Distrito Federal?\"\n\n---\n\n# EXEMPLO COMPLETO 3\n\nCliente:\n\n\"Quero uma casa de 3 quartos em Taguatinga até R$ 600 mil.\"\n\nVocê deve:\n\n* usar `buscar_imoveis`;\n* buscar casas;\n* região Taguatinga;\n* máximo R$ 600.000;\n* 3 quartos;\n* registrar o cliente como lead;\n* responder com os imóveis encontrados.\n\n---\n\n# EXEMPLO COMPLETO 4\n\nCliente:\n\n\"Quanto custa normalmente um apartamento?\"\n\nNão é necessário utilizar imediatamente as ferramentas.\n\nExplique que os preços variam bastante de acordo com:\n\n* região;\n* tamanho;\n* quantidade de quartos;\n* estado do imóvel;\n* condomínio;\n* características do empreendimento.\n\nDepois pergunte:\n\n\"Se quiser, posso procurar algumas opções reais para você. Em qual região você está interessado?\"\n\n---\n\n# EXEMPLO COMPLETO 5\n\nCliente:\n\n\"Quero um apartamento na Asa Norte, 3 quartos, até R$ 700 mil.\"\n\nVocê deve consultar `buscar_imoveis`.\n\nSe nenhum imóvel for encontrado, responda:\n\n\"No momento não encontrei apartamentos que atendam exatamente a esses critérios. Podemos ampliar um pouco a busca. Você prefere aumentar o orçamento ou considerar regiões próximas?\"\n\nNunca invente um imóvel.\n\n---\n\n# REGRAS IMPORTANTES\n\n1. **Nunca invente imóveis.**\n\nTodas as informações sobre imóveis disponíveis devem vir da ferramenta `buscar_imoveis`.\n\n2. **Nunca invente preços.**\n\nUtilize somente valores retornados pela ferramenta.\n\n3. **Nunca invente características de um imóvel.**\n\nQuartos, vagas, localização, área e outras características devem vir da base.\n\n4. Quando o cliente demonstrar interesse real em comprar ou alugar, utilize `registrar_lead`.\n\n5. Não registre pessoas que fizeram somente perguntas genéricas.\n\n6. Não crie registros duplicados de clientes.\n\n7. Não fale mal de outros corretores ou imobiliárias.\n\n8. Não forneça aconselhamento jurídico, financeiro ou bancário especializado.\n\n9. Caso o cliente faça uma pergunta que exija análise jurídica específica, explique que um profissional especializado deverá analisar o caso.\n\n10. Caso não saiba alguma informação, diga que não possui aquela informação. **Nunca invente uma resposta.**\n\n11. Antes de recomendar imóveis, procure entender minimamente as necessidades do cliente.\n\n12. Faça perguntas progressivamente. Não transforme a conversa em um questionário com dez perguntas de uma vez.\n\n---\n\n# ASSUNTOS FORA DO ESCOPO\n\nCaso o usuário faça uma pergunta completamente fora do contexto imobiliário, responda:\n\n\"Meu foco é te ajudar com assuntos relacionados a imóveis. Posso te ajudar a encontrar um imóvel, entender melhor o que você procura ou tirar alguma dúvida sobre compra e aluguel.\"\n\n---\n\n# FORMATAÇÃO DA RESPOSTA\n\nResponda sempre utilizando HTML válido.\n\nUtilize:\n\n* `<b>` para destaque;\n* `<br>` para quebra de linha;\n* `<ul>` e `<li>` para listas;\n* `<a href=\"...\">` para links, quando houver.\n\nNão utilize Markdown.\n\nAo apresentar vários imóveis, separe claramente cada opção.\n\nExemplo:\n\n<b>Encontrei algumas opções para você:</b><br><br>\n\n<b>Opção 1 — IMV-015</b><br>\nRegião: Águas Claras<br>\nTipo: Apartamento<br>\nQuartos: 3<br>\nValor: R$ 590.000<br><br>\n\n<b>Opção 2 — IMV-027</b><br>\nRegião: Águas Claras<br>\nTipo: Apartamento<br>\nQuartos: 3<br>\nValor: R$ 625.000<br><br>\n\nSe alguma informação não estiver disponível na ferramenta, simplesmente não a invente.\n",
+          "maxIterations": 10
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        448,
+        96
+      ],
+      "id": "6d02350a-7cfd-43b7-b9fd-3cf4590b46d9",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.threadId }}",
+        "contextWindowLength": 30
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        464,
+        320
+      ],
+      "id": "571a2e76-54e6-4700-a5da-b7ce8210afc0",
+      "name": "Simple Memory",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1viMwQ-9GR-vMQkqL0S2-41glTC011jRrLB4SxHEui0s",
+          "mode": "list",
+          "cachedResultName": "planilha_leads_teste",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1viMwQ-9GR-vMQkqL0S2-41glTC011jRrLB4SxHEui0s/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1400695007,
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1viMwQ-9GR-vMQkqL0S2-41glTC011jRrLB4SxHEui0s/edit#gid=1400695007"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "E-mail": "={{ $json.from.value[0].address }}",
+            "Data": "={{ $today.format('dd-MM-yyyy') }}",
+            "Nome": "={{ $json.from.value[0].name }}",
+            "Telefone": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Telefone', ``, 'string') }}",
+            "Interesse": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Interesse', ``, 'string') }}",
+            "Região de Preferência": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Regi_o_de_Prefer_ncia', ``, 'string') }}",
+            "Tipo de Imóvel": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Tipo_de_Im_vel', ``, 'string') }}",
+            "Quartos": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Quartos', ``, 'string') }}",
+            "Orçamento Máximo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Or_amento_M_ximo', ``, 'string') }}",
+            "Imóvel de Interesse (ID)": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Im_vel_de_Interesse__ID_', ``, 'string') }}",
+            "Resumo da Conversa": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Resumo_da_Conversa', ``, 'string') }}",
+            "Status": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Status', ``, 'string') }}",
+            "Próximo Passo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Pr_ximo_Passo', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "E-mail"
+          ],
+          "schema": [
+            {
+              "id": "Data",
+              "displayName": "Data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nome",
+              "displayName": "Nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "E-mail",
+              "displayName": "E-mail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Interesse",
+              "displayName": "Interesse",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Região de Preferência",
+              "displayName": "Região de Preferência",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tipo de Imóvel",
+              "displayName": "Tipo de Imóvel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Quartos",
+              "displayName": "Quartos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Orçamento Máximo",
+              "displayName": "Orçamento Máximo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Imóvel de Interesse (ID)",
+              "displayName": "Imóvel de Interesse (ID)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Resumo da Conversa",
+              "displayName": "Resumo da Conversa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Próximo Passo",
+              "displayName": "Próximo Passo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        608,
+        304
+      ],
+      "id": "29946aee-ceb4-43e9-8132-3d6d51816fb8",
+      "name": "registrar_lead",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mtQElcefNHzgZ4Fe",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "15uFvWtqqJfCd8WRUA3q7vBo0BYOZ5xY8VEnV_xZvKAg",
+          "mode": "list",
+          "cachedResultName": "base_imoveis_teste",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15uFvWtqqJfCd8WRUA3q7vBo0BYOZ5xY8VEnV_xZvKAg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 286654495,
+          "mode": "list",
+          "cachedResultName": "Imóveis",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15uFvWtqqJfCd8WRUA3q7vBo0BYOZ5xY8VEnV_xZvKAg/edit#gid=286654495"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        752,
+        304
+      ],
+      "id": "7560f24b-cce8-48f9-9964-2435f05f4ec9",
+      "name": "buscar_imoveis",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mtQElcefNHzgZ4Fe",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        336,
+        288
+      ],
+      "id": "96772571-2b1c-48e4-b58f-dc81d9e7f582",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "CK4g63Y4KIwfyeld",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        176,
+        288
+      ],
+      "id": "9c460e9f-bb62-4ca9-9002-13bb76a19adf",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "pZeRfhSWOOm8qDYL",
+          "name": "chave bsash"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $('If').first().json.id }}",
+        "message": "={{ $json.output }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        960,
+        48
+      ],
+      "id": "cdef9669-02dd-4cb3-9e38-8ccfa7e290c7",
+      "name": "Reply to a message",
+      "webhookId": "352c46cd-2b5e-4e4f-a927-904c19520420",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "kyohGRNHx9Iem5iC",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('If').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        960,
+        240
+      ],
+      "id": "dde5e042-b27a-474d-bc1b-319344ffec8e",
+      "name": "Mark a message as read",
+      "webhookId": "8b5761a7-885a-4ad6-b460-e6406f2d9e18",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "kyohGRNHx9Iem5iC",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buscar_imoveis": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "registrar_lead": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Mark a message as read",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Reply to a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark a message as read": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "62a07ebd-019a-48c3-9dc8-88921caf3f6e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8067722844969ad741e72ed2d77bf0bba281abdff244c5107146d8c648eb5a6a"
+  },
+  "nodeGroups": [],
+  "id": "1unxq6VAaLbKHtie",
+  "tags": []
+}
