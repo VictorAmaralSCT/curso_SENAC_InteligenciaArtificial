@@ -1,0 +1,34 @@
+probabilidades_reais = [0.05, 0.10, 0.20]
+
+def simular_clique(indice_anuncio):
+    return int(np.random.random() < probabilidades_reais[indice_anuncio])
+
+recompensas = [0, 0, 0]
+quantidades = [0, 0, 0]
+
+epsilon = 0.15
+
+for rodada in range(1000):
+    if np.random.random() < epsilon:
+        anuncio = np.random.randint(0, 3)  # explorar
+    else:
+        medias = [
+            recompensas[i] / quantidades[i]
+            if quantidades[i] > 0
+            else 0
+            for i in range(3)
+        ]
+        anuncio = int(np.argmax(medias))   # aproveitar
+
+    recompensa = simular_clique(anuncio)
+
+    quantidades[anuncio] += 1
+    recompensas[anuncio] += recompensa
+
+for i in range(3):
+    media = recompensas[i] / quantidades[i]
+    print(
+        f"Anúncio {i}: "
+        f"exibições={quantidades[i]}, "
+        f"recompensa média={media:.3f}"
+    )
